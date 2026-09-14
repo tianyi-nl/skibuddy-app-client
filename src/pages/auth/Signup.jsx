@@ -1,6 +1,10 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -12,17 +16,26 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    
+    const body = {
+      email,
+      password,
+      name: username,
+    };
 
-    // ... contact backend to register the user
+    try {
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/signup`,body)
+      console.log("all good user created")
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
     <div>
-
       <h1>Signup Form</h1>
-    
-      <form onSubmit={handleSignup}>
 
+      <form onSubmit={handleSignup}>
         <label>Email:</label>
         <input
           type="email"
@@ -55,7 +68,6 @@ function Signup() {
 
         <button type="submit">Signup</button>
       </form>
-      
     </div>
   );
 }
