@@ -10,13 +10,15 @@ function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleUsernameChange = (e) => setUsername(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
+
     const body = {
       email,
       password,
@@ -25,9 +27,15 @@ function Signup() {
 
     try {
       await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/signup`,body)
-      console.log("all good user created")
+     navigate("/login");
+     
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      if (error.response.status === 400) {
+        setErrorMessage(error.response.data.errorMessage);
+      } else {
+        // we should send the user to an error page
+      }
     }
   };
 
@@ -67,6 +75,7 @@ function Signup() {
         <br />
 
         <button type="submit">Signup</button>
+        {errorMessage && <p>{errorMessage}</p>}
       </form>
     </div>
   );
