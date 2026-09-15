@@ -1,9 +1,27 @@
-function Home() {
+import { useState, useEffect } from "react";
+import { getAllTrips } from "../services/trip.services";
+import HeroVideo from "../components/HeroVideo";
+import ComingTripsSection from "../components/ComingTripsSection";
+import SearchBar from "../components/SearchBar";
+import CreatorSection from "../components/CreatorSection";
+
+function HomePage() {
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    getAllTrips()
+      .then((response) => setTrips(response.data))
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <div>
-      <h1>Home</h1>
+      <HeroVideo />
+      <SearchBar />
+      <ComingTripsSection trips={trips} />
+      <CreatorSection trips={trips} />
     </div>
-  )
+  );
 }
 
-export default Home
+export default HomePage;

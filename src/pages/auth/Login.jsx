@@ -45,7 +45,7 @@ const { setIsLoggedIn, setLoggedUserId } = useContext(AuthContext);
       setIsLoggedIn(true);
       setLoggedUserId(response.data.payload._id);
       
-      navigate("/private-page-example");
+      navigate("/my-trips");
     } catch (error) {
       console.log(error);
       if (error.response.status === 400) {

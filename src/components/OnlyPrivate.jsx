@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthContext } from '../context/auth.context'
 import { Navigate } from 'react-router-dom'
+import { useContext } from 'react'
 
 
 
@@ -15,8 +16,6 @@ function OnlyPrivate(props) {
     return <Navigate to = "/login"/>
    }
   
-  
-    return props.children
 }
 
 export default OnlyPrivate
