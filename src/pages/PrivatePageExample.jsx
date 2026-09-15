@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
+import service from '../services/index.services'
 
 function PrivatePageExample() {
 
@@ -12,7 +14,7 @@ function PrivatePageExample() {
     try {
       
       // call a private route here...
-
+   const response = await service.get("")
     } catch (error) {
       console.log(error)
     }

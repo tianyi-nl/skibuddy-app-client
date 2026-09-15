@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../context/auth.context";
+import service from "../../services/index.services";
 
 
 function Login() {
@@ -30,11 +31,11 @@ const { setIsLoggedIn, setLoggedUserId } = useContext(AuthContext);
     try {
       // ... contact backend to validate the user's credentials
 
-      //const response = await service.post ("/auth/login", body)
-      const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/api/auth/login`,
-        body,
-      );
+      const response = await service.post ("/auth/login", body)
+      //const response = await axios.post(
+       // `${import.meta.env.VITE_SERVER_URL}/api/auth/login`,
+       // body,
+      //);
       console.log(response);
       
       //store the token in localStorge

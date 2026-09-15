@@ -2,9 +2,9 @@ import React from "react";
 import { createContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import service from "../services/index.services";
 
 const AuthContext = createContext();
-
 
 function AuthWrapper({ children }) {
   //todo add the states and function here
@@ -13,32 +13,30 @@ function AuthWrapper({ children }) {
   const [isVerifyingUser, setIsVerifyingUser] = useState(true);
 
   const verifyUser = async () => {
-  
-
-    const authToken = localStorage.getItem("authToken");
+    //const authToken = localStorage.getItem("authToken");
 
     try {
-     // const response = await axios.get(
-       // `${import.meta.env.VITE_SERVER - URL}/api/auth/verify`,
-       // {
-          //headers: {
-            // authorization: `Bearer ${authToken}`,
-          //},
-       // },
-     // );
-
-     const response = await service.get()
+      // const response = await axios.get(
+      // `${import.meta.env.VITE_SERVER - URL}/api/auth/verify`,
+      // {
+      //headers: {
+      // authorization: `Bearer ${authToken}`,
+      //},
+      // },
+      // );
+       const response = await service.get("/auth/verify")
+      console.log(response)
 
       // the token is valid
       setIsLoggedIn(true);
-      setLoggedUserId(response.data.payload._id);
-      setIsVerifyingUser(false)
+      setLoggedUserId(response.data._id);
+      setIsVerifyingUser(false);
     } catch (error) {
       // the token is not valid
 
       setIsLoggedIn(false);
       setLoggedUserId(null);
-      setIsVerifyingUser(false)
+      setIsVerifyingUser(false);
     }
   };
 
