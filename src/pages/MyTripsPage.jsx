@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getMyTrips } from "../services/trip.services";
+import TripCard from "../components/TripCard";
 
 function MyTripsPage() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function MyTripsPage() {
   }, []);
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl px-6 py-12">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">My Trips</h1>
         <button
@@ -50,32 +51,42 @@ function MyTripsPage() {
 
       {view === "created" && (
         <div>
-          {createdTrips.length === 0 && <p>You haven't created any trips yet.</p>}
-          {createdTrips.map((trip) => (
-            <div key={trip._id} className="border-b py-3">
-              <h3 className="font-bold">{trip.title}</h3>
-              <p className="text-gray-500 text-sm">{trip.location}, {trip.country}</p>
-              <Link to={`/trips/${trip._id}`} className="text-blue-600 text-sm">
-                View / Edit
-              </Link>
+          {createdTrips.length === 0 ? (
+            <p className="text-gray-500">You haven't created any trips yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {createdTrips.map((trip) => (
+                <TripCard key={trip._id} trip={trip} />
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 
       {view === "joined" && (
         <div>
-          {myJoinRequests.length === 0 && <p>You haven't requested to join any trips yet.</p>}
-          {myJoinRequests.map((request) => (
-            <div key={request._id} className="border-b py-3">
-              <h3 className="font-bold">{request.trip?.title}</h3>
-              <p className="text-gray-500 text-sm">{request.trip?.location}, {request.trip?.country}</p>
-              <p className="text-sm">Status: {request.status}</p>
-              <Link to={`/trips/${request.trip?._id}`} className="text-blue-600 text-sm">
-                View Trip
-              </Link>
+          {myJoinRequests.length === 0 ? (
+            <p className="text-gray-500">You haven't requested to join any trips yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {myJoinRequests.map((request) => (
+                <div key={request._id} className="relative">
+                  <TripCard trip={request.trip} />
+                  <span
+                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold capitalize shadow ${
+                      request.status === "accepted"
+                        ? "bg-green-500 text-white"
+                        : request.status === "rejected"
+                        ? "bg-red-500 text-white"
+                        : "bg-yellow-400 text-gray-900"
+                    }`}
+                  >
+                    {request.status}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

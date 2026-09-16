@@ -150,18 +150,15 @@ function Signup() {
       </div>
 
       {/* RIGHT SIDE - IMAGE */}
-      <div className="hidden w-1/2 p-6 lg:block">
-
-        <div className="relative flex h-[780px] min-h-[700px] w-[560px] items-center justify-center overflow-hidden rounded-3xl ">
-
-          <img
-            src={bdimg}
-            alt="Ski trip illustration"
-            className="h-full w-full object-cover"
-          />
-
-        </div>
-      </div>
+       <div className="hidden w-1/2 p-6 lg:block">
+              <div className="relative h-[780px] min-h-[700px] w-full max-w-[560px] overflow-hidden rounded-3xl">
+                <img
+                  src={bdimg}
+                  alt="Ski trip illustration"
+                  className="h-full w-full rounded-3xl object-cover"
+                />
+              </div>
+            </div>
 
     </div>
   );

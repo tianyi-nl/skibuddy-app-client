@@ -21,9 +21,9 @@ function Navbar() {
       {/* Center — nav links */}
       <div className="flex gap-8 text-black font-medium text-lg">
         <Link to="/" className="hover:text-blue-600 transition">Home</Link>
-        <Link to="/trips" className="hover:text-blue-200 transition">Ski Trips</Link>
+        <Link to="/trips" className="hover:text-blue-600 transition">Ski Trips</Link>
         {isLoggedIn && (
-          <Link to="/my-trips" className="hover:text-blue-200 transition">My Trips</Link>
+          <Link to="/my-trips" className="hover:text-blue-600 transition">My Trips</Link>
         )}
       </div>
 

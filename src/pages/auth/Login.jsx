@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../context/auth.context";
 import service from "../../services/index.services";
-import bgimage from "../../assets/loginbgimg.jpg"
+import bgimage from "../../assets/loginbgimg.jpg";
 
 function Login() {
   const { setIsLoggedIn, setLoggedUserId } = useContext(AuthContext);
@@ -43,12 +43,9 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-white lg:flex">
-
       {/* LEFT SIDE - LOGIN FORM */}
       <div className="flex w-full items-center justify-center px-6 py-12 lg:w-1/2 lg:px-16">
-
         <div className="w-full max-w-md">
-
           {/* Logo / Brand */}
           <div className="mb-10">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -58,7 +55,6 @@ function Login() {
 
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-5">
-
             {/* Email */}
             <div>
               <label
@@ -127,8 +123,6 @@ function Login() {
             </button>
           </form>
 
-        
-
           {/* Signup link */}
           <p className="mt-12 text-center text-sm text-gray-500">
             Not a member?{" "}
@@ -139,24 +133,19 @@ function Login() {
               Register now
             </Link>
           </p>
-
         </div>
       </div>
 
       {/* RIGHT SIDE - IMAGE */}
       <div className="hidden w-1/2 p-6 lg:block">
-
-        <div className="relative flex h-[780px] min-h-[700px] w-[560px] items-center justify-center overflow-hidden rounded-3xl ">
-
+        <div className="relative h-[780px] min-h-[700px] w-full max-w-[560px] overflow-hidden rounded-3xl">
           <img
             src={bgimage}
             alt="Ski trip illustration"
-            className="h-full w-full object-cover"
+            className="h-full w-full rounded-3xl object-cover"
           />
-
         </div>
       </div>
-
     </div>
   );
 }
