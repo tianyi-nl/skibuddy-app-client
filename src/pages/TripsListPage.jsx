@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { getAllTrips } from "../services/trip.services";
+import TripCard from "../components/TripCard";
 
 function TripsListPage() {
   const [trips, setTrips] = useState([]);
@@ -12,17 +12,20 @@ function TripsListPage() {
   }, []);
 
   return (
-    <div>
-      <h1>Ski Trips</h1>
-      {trips.map((trip) => (
-        <div key={trip._id}>
-          <h3>{trip.title}</h3>
-          <p>{trip.location}, {trip.country}</p>
-          <p>Created by: {trip.creator?.name}</p>
-          <Link to={`/trips/${trip._id}`}>View Details</Link>
-        </div>
-      ))}
-    </div>
+    <section className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Ski Trips</h1>
+        <p className="mt-2 text-gray-500">
+          Browse all upcoming ski trips.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {trips.map((trip) => (
+          <TripCard key={trip._id} trip={trip} />
+        ))}
+      </div>
+    </section>
   );
 }
 

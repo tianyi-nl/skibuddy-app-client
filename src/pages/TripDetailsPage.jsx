@@ -19,6 +19,7 @@ function TripDetailsPage() {
   const [trip, setTrip] = useState(null);
   const [myRequest, setMyRequest] = useState(null);
   const [requests, setRequests] = useState([]);
+  const [message, setMessage] = useState("");
 
   const isCreator = trip && loggedUserId === trip.creator?._id;
 
@@ -47,7 +48,6 @@ function TripDetailsPage() {
 
   useEffect(() => {
     if (!trip || !isLoggedIn) return;
-
     if (loggedUserId === trip.creator?._id) {
       loadRequestsForTrip();
     } else {
@@ -56,7 +56,7 @@ function TripDetailsPage() {
   }, [trip, isLoggedIn]);
 
   const handleJoinRequest = () => {
-    createJoinRequest({ trip: tripId, message: "" })
+    createJoinRequest({ trip: tripId, message })
       .then(() => loadMyRequest())
       .catch((error) => console.log(error));
   };
@@ -79,63 +79,183 @@ function TripDetailsPage() {
       .catch((error) => console.log(error));
   };
 
-  if (!trip) return <p>Loading...</p>;
-
+  if (!trip) return <p className="text-center py-20">Loading...</p>;
 
   return (
-    <div>
-      <h1>{trip.title}</h1>
-      <p>{trip.description}</p>
-      <p>{trip.location}, {trip.country}</p>
-      <p>Level: {trip.level}</p>
-      <p>Max people: {trip.maxPeople}</p>
-      <p>Estimated budget: €{trip.estimatedBudget}</p>
-      <p>Transportation: {trip.hasTransportation ? "Yes" : "No"}</p>
-      <p>Created by: {trip.creator?.name}</p>
+    <div className="max-w-5xl mx-auto py-10">
+      {/* Title */}
+      <h1 className="text-3xl font-bold mb-6">{trip.title}</h1>
 
-      {/* CREATOR VIEW */}
-      {isLoggedIn && isCreator && (
-        <div>
-          <button onClick={() => navigate(`/trips/${tripId}/edit`)}>Edit Trip</button>
+      {/* Big image */}
+      <div className="w-full h-120 rounded-2xl overflow-hidden bg-gray-100 mb-8">
+        {trip.images?.[0] ? (
+          <img
+            src={trip.images[0]}
+            alt={trip.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-300 text-5xl">
+            🏔️
+          </div>
+        )}
+      </div>
 
-          <h3>Join Requests</h3>
-          {requests.length === 0 && <p>No requests yet.</p>}
-          {requests.map((req) => (
-            <div key={req._id}>
-              <p>{req.user?.name} — {req.status}</p>
-              {req.status === "pending" && (
+      {/* Main content: left column + right card */}
+      <div className="flex gap-10">
+        {/* LEFT COLUMN */}
+        <div className="flex-1 flex flex-col items-start">
+          {/* Creator avatar */}
+          <img
+            src={trip.creator?.profilePicture}
+            alt={trip.creator?.name}
+            className="w-20 h-20 rounded-full object-cover border border-gray-300 mb-6"
+          />
+
+          {/* Description */}
+          <h3 className="font-bold text-lg mb-2">Description</h3>
+          <p className="text-gray-600 leading-relaxed">{trip.description}</p>
+
+          {/* Details grid */}
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8 w-full mt-12">
+            <div className="flex items-baseline gap-2">
+              <h4 className="font-bold">Country:</h4>
+              <p className="text-gray-600">{trip.country}</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h4 className="font-bold">Location:</h4>
+              <p className="text-gray-600">{trip.location}</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h4 className="font-bold">Level:</h4>
+              <p className="text-gray-600 capitalize">{trip.level}</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h4 className="font-bold">Estimated budget:</h4>
+              <p className="text-gray-600">€{trip.estimatedBudget}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT CARD — changes based on creator vs non-creator */}
+        <div className="w-80 shrink-0 border border-gray-200 rounded-2xl p-6 bg-white  h-80">
+          <div className="space-y-4 mb-6">
+            <div>
+              <h4 className="font-bold">Start date</h4>
+              <p className="text-gray-600">
+                {new Date(trip.startDate).toLocaleDateString()}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold">End date</h4>
+              <p className="text-gray-600">
+                {new Date(trip.endDate).toLocaleDateString()}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold">Max people</h4>
+              <p className="text-gray-600">{trip.maxPeople}</p>
+            </div>
+          </div>
+
+          {/* CREATOR VIEW */}
+          {isLoggedIn && isCreator && (
+            <div>
+              <button
+                onClick={() => navigate(`/trips/${tripId}/edit`)}
+                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-full transition mb-6"
+              >
+                Edit Trip
+              </button>
+
+              <h4 className="font-bold mb-2">Join Requests</h4>
+              {requests.length === 0 && (
+                <p className="text-gray-500 text-sm">No requests yet.</p>
+              )}
+              <div className="space-y-3">
+                {requests.map((req) => (
+                  <div key={req._id} className="border-t pt-3">
+                    <p className="text-sm font-medium">{req.user?.name}</p>
+                    <p className="text-xs text-gray-500 mb-2 capitalize">
+                      {req.status}
+                    </p>
+                    {req.status === "pending" && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleAccept(req._id)}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1.5 rounded-full transition"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleReject(req._id)}
+                          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium py-1.5 rounded-full transition"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* NON-CREATOR VIEW */}
+          {isLoggedIn && !isCreator && (
+            <div>
+              {!myRequest && (
                 <>
-                  <button onClick={() => handleAccept(req._id)}>Accept</button>
-                  <button onClick={() => handleReject(req._id)}>Reject</button>
+                  <label className="font-bold block mb-2">Message:</label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={4}
+                    placeholder="Say a few words..."
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <button
+                    onClick={handleJoinRequest}
+                    className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-full transition"
+                  >
+                    Send request
+                  </button>
                 </>
               )}
-            </div>
-          ))}
-        </div>
-      )}
 
-      {/* NON-CREATOR VIEW */}
-      {isLoggedIn && !isCreator && (
-        <div>
-          {!myRequest && (
-            <button onClick={handleJoinRequest}>Request to Join</button>
-          )}
-          {myRequest && myRequest.status === "pending" && (
-            <div>
-              <p>Your request is pending.</p>
-              <button onClick={handleCancelRequest}>Cancel Request</button>
+              {myRequest && myRequest.status === "pending" && (
+                <div>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Your request is pending.
+                  </p>
+                  <button
+                    onClick={handleCancelRequest}
+                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-full transition"
+                  >
+                    Cancel Request
+                  </button>
+                </div>
+              )}
+
+              {myRequest && myRequest.status === "accepted" && (
+                <p className="text-green-600 font-medium">You're in! ✅</p>
+              )}
+
+              {myRequest && myRequest.status === "rejected" && (
+                <p className="text-red-500 font-medium">
+                  Your request was rejected.
+                </p>
+              )}
             </div>
           )}
-          {myRequest && myRequest.status === "accepted" && (
-            <p>You're in! ✅</p>
-          )}
-          {myRequest && myRequest.status === "rejected" && (
-            <p>Your request was rejected.</p>
+
+          {!isLoggedIn && (
+            <p className="text-gray-500 text-sm">
+              Log in to request joining this trip.
+            </p>
           )}
         </div>
-      )}
-
-      {!isLoggedIn && <p>Log in to request joining this trip.</p>}
+      </div>
     </div>
   );
 }
