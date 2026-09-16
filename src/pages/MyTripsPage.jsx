@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getMyTrips } from "../services/trip.services";
 
 function MyTripsPage() {
+  const navigate = useNavigate();
   const [createdTrips, setCreatedTrips] = useState([]);
   const [myJoinRequests, setMyJoinRequests] = useState([]);
-  const [view, setView] = useState("created"); // "created" or "joined"
+  const [view, setView] = useState("created");
 
   useEffect(() => {
     getMyTrips()
@@ -18,19 +19,45 @@ function MyTripsPage() {
 
   return (
     <div>
-      <h1>My Trips</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">My Trips</h1>
+        <button
+          onClick={() => navigate("/trips/create")}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition"
+        >
+          Post a Ski Trip
+        </button>
+      </div>
 
-      <button onClick={() => setView("created")}>Trips I Created</button>
-      <button onClick={() => setView("joined")}>Trips I've Requested to Join</button>
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setView("created")}
+          className={`px-4 py-2 rounded-full font-medium transition ${
+            view === "created" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+          }`}
+        >
+          Trips I Created
+        </button>
+        <button
+          onClick={() => setView("joined")}
+          className={`px-4 py-2 rounded-full font-medium transition ${
+            view === "joined" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+          }`}
+        >
+          Trips I've Requested to Join
+        </button>
+      </div>
 
       {view === "created" && (
         <div>
           {createdTrips.length === 0 && <p>You haven't created any trips yet.</p>}
           {createdTrips.map((trip) => (
-            <div key={trip._id}>
-              <h3>{trip.title}</h3>
-              <p>{trip.location}, {trip.country}</p>
-              <Link to={`/trips/${trip._id}`}>View / Edit</Link>
+            <div key={trip._id} className="border-b py-3">
+              <h3 className="font-bold">{trip.title}</h3>
+              <p className="text-gray-500 text-sm">{trip.location}, {trip.country}</p>
+              <Link to={`/trips/${trip._id}`} className="text-blue-600 text-sm">
+                View / Edit
+              </Link>
             </div>
           ))}
         </div>
@@ -40,11 +67,13 @@ function MyTripsPage() {
         <div>
           {myJoinRequests.length === 0 && <p>You haven't requested to join any trips yet.</p>}
           {myJoinRequests.map((request) => (
-            <div key={request._id}>
-              <h3>{request.trip?.title}</h3>
-              <p>{request.trip?.location}, {request.trip?.country}</p>
-              <p>Status: {request.status}</p>
-              <Link to={`/trips/${request.trip?._id}`}>View Trip</Link>
+            <div key={request._id} className="border-b py-3">
+              <h3 className="font-bold">{request.trip?.title}</h3>
+              <p className="text-gray-500 text-sm">{request.trip?.location}, {request.trip?.country}</p>
+              <p className="text-sm">Status: {request.status}</p>
+              <Link to={`/trips/${request.trip?._id}`} className="text-blue-600 text-sm">
+                View Trip
+              </Link>
             </div>
           ))}
         </div>

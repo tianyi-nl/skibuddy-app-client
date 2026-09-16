@@ -32,7 +32,7 @@ function App() {
 
         <Route path="/trips" element={<TripsListPage />} />
         <Route path="/trips/:tripId" element={<TripDetailsPage />} />
-      <Route path="/trips/:tripId/edit" element={<OnlyPrivate><EditTripPage /></OnlyPrivate>}/>
+        <Route path="/trips/:tripId/edit" element={<OnlyPrivate><EditTripPage /></OnlyPrivate>}/>
         <Route path="/trips/create" element={<OnlyPrivate><CreateTripPage /></OnlyPrivate>}/>
         <Route path="/my-trips" element={<OnlyPrivate><MyTripsPage /></OnlyPrivate>}/>
 
