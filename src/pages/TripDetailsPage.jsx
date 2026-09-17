@@ -109,7 +109,7 @@ function TripDetailsPage() {
           <img
             src={trip.creator?.profilePicture}
             alt={trip.creator?.name}
-            className="w-20 h-20 rounded-full object-cover border border-gray-300 mb-6"
+            className="w-28 h-28 rounded-full object-cover mb-6"
           />
 
           {/* Description */}
@@ -135,10 +135,59 @@ function TripDetailsPage() {
               <p className="text-gray-600">€{trip.estimatedBudget}</p>
             </div>
           </div>
+
+          {/* JOIN REQUESTS — creator only, now in the left column */}
+          {isLoggedIn && isCreator && (
+            <div className="w-full mt-28 ">
+              <h3 className="font-bold text-lg mb-4 flex flex-col items-start">Join Requests</h3>
+
+              {requests.length === 0 && (
+                <p className="text-gray-500 text-sm">No requests yet.</p>
+              )}
+
+              <div className="space-y-4">
+                {requests.map((req) => (
+                  <div
+                    key={req._id}
+                    className="flex items-center justify-between   rounded-xl p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={req.user?.profilePicture}
+                        alt={req.user?.name}
+                        className="w-16 h-16 rounded-full object-cover "
+                      />
+                      <div>
+                        <p className="font-medium">{req.user?.name}</p>
+                        <p className="text-xs text-gray-500 capitalize">{req.status}</p>
+                      </div>
+                    </div>
+
+                    {req.status === "pending" && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleAccept(req._id)}
+                          className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-1.5 rounded-full transition"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleReject(req._id)}
+                          className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium px-4 py-1.5 rounded-full transition"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* RIGHT CARD — changes based on creator vs non-creator */}
-        <div className="w-80 shrink-0 border border-gray-200 rounded-2xl p-6 bg-white  h-80">
+        {/* RIGHT CARD — now simplified, just dates/capacity + main action */}
+        <div className="w-80 shrink-0 border border-gray-200 rounded-2xl p-6 bg-white h-fit">
           <div className="space-y-4 mb-6">
             <div>
               <h4 className="font-bold">Start date</h4>
@@ -158,47 +207,14 @@ function TripDetailsPage() {
             </div>
           </div>
 
-          {/* CREATOR VIEW */}
+          {/* CREATOR VIEW — just Edit now */}
           {isLoggedIn && isCreator && (
-            <div>
-              <button
-                onClick={() => navigate(`/trips/${tripId}/edit`)}
-                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-full transition mb-6"
-              >
-                Edit Trip
-              </button>
-
-              <h4 className="font-bold mb-2">Join Requests</h4>
-              {requests.length === 0 && (
-                <p className="text-gray-500 text-sm">No requests yet.</p>
-              )}
-              <div className="space-y-3">
-                {requests.map((req) => (
-                  <div key={req._id} className="border-t pt-3">
-                    <p className="text-sm font-medium">{req.user?.name}</p>
-                    <p className="text-xs text-gray-500 mb-2 capitalize">
-                      {req.status}
-                    </p>
-                    {req.status === "pending" && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleAccept(req._id)}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1.5 rounded-full transition"
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={() => handleReject(req._id)}
-                          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium py-1.5 rounded-full transition"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <button
+              onClick={() => navigate(`/trips/${tripId}/edit`)}
+              className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-full transition"
+            >
+              Edit Trip
+            </button>
           )}
 
           {/* NON-CREATOR VIEW */}
