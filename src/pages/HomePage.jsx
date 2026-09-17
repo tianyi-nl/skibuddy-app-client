@@ -17,8 +17,8 @@ function HomePage() {
   return (
     <div>
       <HeroVideo />
-      <SearchBar />
       <ComingTripsSection trips={trips} />
+      <SearchBar />
       <CreatorSection trips={trips} />
     </div>
   );
