@@ -10,7 +10,7 @@ function CreatorSection({ trips }) {
         Meet the people organizing these trips.
       </p>
 
-<div className="flex flex-wrap gap-4">
+<div className="flex flex-wrap gap-8">
         {uniqueCreators.map((creator) => (
           <div key={creator._id} className="flex flex-col items-center w-[120px]">
             <img
