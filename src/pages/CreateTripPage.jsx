@@ -22,7 +22,7 @@ function CreateTripPage() {
     images: [],
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
 
@@ -35,17 +35,22 @@ function CreateTripPage() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
-    setImagePreview(URL.createObjectURL(file)); // instant local preview
     setIsUploading(true);
 
-    uploadImage(file)
-      .then((response) => {
+    // instant local previews for all selected files
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prev) => [...prev, ...previews]);
+
+    // upload each file, then add all resulting URLs to formData.images
+    Promise.all(files.map((file) => uploadImage(file)))
+      .then((responses) => {
+        const newUrls = responses.map((res) => res.data.imageUrl);
         setFormData((prev) => ({
           ...prev,
-          images: [...prev.images, response.data.imageUrl],
+          images: [...prev.images, ...newUrls],
         }));
         setIsUploading(false);
       })
@@ -77,6 +82,34 @@ function CreateTripPage() {
     <div className="max-w-xl mx-auto py-10">
       <h1 className="text-2xl font-bold mb-8 text-center">Create a Trip</h1>
 
+      {/* Image upload */}
+      <div className="mb-8">
+        <label className="block w-full h-56 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden bg-gray-50">
+          {imagePreviews.length > 0 ? (
+            <div className="flex gap-2 overflow-x-auto p-2 w-full h-full">
+              {imagePreviews.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`Preview ${i}`}
+                  className="h-full w-32 shrink-0 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          ) : (
+            <span className="text-gray-400 text-sm">
+              {isUploading ? "Uploading..." : "Click to upload photos"}
+            </span>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="hidden"
+          />
+        </label>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
@@ -198,19 +231,6 @@ function CreateTripPage() {
           />
         </div>
 
-      {/* Image upload at the top */}
-      <div className="mb-8">
-        <label className="block w-full h-56 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden bg-gray-50">
-          {imagePreview ? (
-            <img src={imagePreview} alt="Trip preview" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-gray-400 text-sm">
-              {isUploading ? "Uploading..." : "Click to upload a photo"}
-            </span>
-          )}
-          <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-        </label>
-      </div>
         <button
           type="submit"
           disabled={isUploading}

@@ -10,7 +10,7 @@ function EditTripPage() {
   const { loggedUserId } = useContext(AuthContext);
 
   const [formData, setFormData] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
@@ -39,8 +39,8 @@ function EditTripPage() {
           images: trip.images || [],
         });
 
-        if (trip.images?.[0]) {
-          setImagePreview(trip.images[0]);
+        if (trip.images?.length > 0) {
+          setImagePreviews(trip.images);
         }
       })
       .catch((error) => console.log(error));
@@ -55,17 +55,20 @@ function EditTripPage() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
-    setImagePreview(URL.createObjectURL(file));
     setIsUploading(true);
 
-    uploadImage(file)
-      .then((response) => {
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prev) => [...prev, ...previews]);
+
+    Promise.all(files.map((file) => uploadImage(file)))
+      .then((responses) => {
+        const newUrls = responses.map((res) => res.data.imageUrl);
         setFormData((prev) => ({
           ...prev,
-          images: [...prev.images, response.data.imageUrl],
+          images: [...prev.images, ...newUrls],
         }));
         setIsUploading(false);
       })
@@ -105,14 +108,29 @@ function EditTripPage() {
       {/* Image upload */}
       <div className="mb-8">
         <label className="block w-full h-56 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden bg-gray-50">
-          {imagePreview ? (
-            <img src={imagePreview} alt="Trip preview" className="w-full h-full object-cover" />
+          {imagePreviews.length > 0 ? (
+            <div className="flex gap-2 overflow-x-auto p-2 w-full h-full">
+              {imagePreviews.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`Preview ${i}`}
+                  className="h-full w-32 shrink-0 object-cover rounded-lg"
+                />
+              ))}
+            </div>
           ) : (
             <span className="text-gray-400 text-sm">
-              {isUploading ? "Uploading..." : "Click to upload a photo"}
+              {isUploading ? "Uploading..." : "Click to upload photos"}
             </span>
           )}
-          <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </label>
       </div>
 

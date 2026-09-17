@@ -20,6 +20,7 @@ function TripDetailsPage() {
   const [myRequest, setMyRequest] = useState(null);
   const [requests, setRequests] = useState([]);
   const [message, setMessage] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const isCreator = trip && loggedUserId === trip.creator?._id;
 
@@ -79,6 +80,18 @@ function TripDetailsPage() {
       .catch((error) => console.log(error));
   };
 
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === trip.images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? trip.images.length - 1 : prev - 1
+    );
+  };
+
   if (!trip) return <p className="text-center py-20">Loading...</p>;
 
   return (
@@ -86,14 +99,46 @@ function TripDetailsPage() {
       {/* Title */}
       <h1 className="text-3xl font-bold mb-6">{trip.title}</h1>
 
-      {/* Big image */}
-      <div className="w-full h-120 rounded-2xl overflow-hidden bg-gray-100 mb-8">
-        {trip.images?.[0] ? (
-          <img
-            src={trip.images[0]}
-            alt={trip.title}
-            className="w-full h-full object-cover"
-          />
+      {/* Big image with carousel */}
+      <div className="relative w-full h-120 rounded-2xl overflow-hidden bg-gray-100 mb-8">
+        {trip.images?.length > 0 ? (
+          <>
+            <img
+              src={trip.images[currentImageIndex]}
+              alt={`${trip.title} - image ${currentImageIndex + 1}`}
+              className="w-full h-full object-cover"
+            />
+
+            {trip.images.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 shadow transition"
+                >
+                  ‹
+                </button>
+
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 shadow transition"
+                >
+                  ›
+                </button>
+
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {trip.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition ${
+                        index === currentImageIndex ? "bg-white" : "bg-white/50"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 text-5xl">
             🏔️
@@ -109,7 +154,7 @@ function TripDetailsPage() {
           <img
             src={trip.creator?.profilePicture}
             alt={trip.creator?.name}
-            className="w-28 h-28 rounded-full object-cover mb-6"
+            className="w-20 h-20 rounded-full object-cover border border-gray-300 mb-6"
           />
 
           {/* Description */}
@@ -136,10 +181,10 @@ function TripDetailsPage() {
             </div>
           </div>
 
-          {/* JOIN REQUESTS — creator only, now in the left column */}
+          {/* JOIN REQUESTS — creator only */}
           {isLoggedIn && isCreator && (
-            <div className="w-full mt-28 ">
-              <h3 className="font-bold text-lg mb-4 flex flex-col items-start">Join Requests</h3>
+            <div className="w-full mt-12">
+              <h3 className="font-bold text-lg mb-4">Join Requests</h3>
 
               {requests.length === 0 && (
                 <p className="text-gray-500 text-sm">No requests yet.</p>
@@ -149,13 +194,13 @@ function TripDetailsPage() {
                 {requests.map((req) => (
                   <div
                     key={req._id}
-                    className="flex items-center justify-between   rounded-xl p-4"
+                    className="flex items-center justify-between border border-gray-200 rounded-xl p-4"
                   >
                     <div className="flex items-center gap-3">
                       <img
                         src={req.user?.profilePicture}
                         alt={req.user?.name}
-                        className="w-16 h-16 rounded-full object-cover "
+                        className="w-12 h-12 rounded-full object-cover border border-gray-300"
                       />
                       <div>
                         <p className="font-medium">{req.user?.name}</p>
@@ -186,7 +231,7 @@ function TripDetailsPage() {
           )}
         </div>
 
-        {/* RIGHT CARD — now simplified, just dates/capacity + main action */}
+        {/* RIGHT CARD */}
         <div className="w-80 shrink-0 border border-gray-200 rounded-2xl p-6 bg-white h-fit">
           <div className="space-y-4 mb-6">
             <div>
@@ -207,7 +252,6 @@ function TripDetailsPage() {
             </div>
           </div>
 
-          {/* CREATOR VIEW — just Edit now */}
           {isLoggedIn && isCreator && (
             <button
               onClick={() => navigate(`/trips/${tripId}/edit`)}
@@ -217,7 +261,6 @@ function TripDetailsPage() {
             </button>
           )}
 
-          {/* NON-CREATOR VIEW */}
           {isLoggedIn && !isCreator && (
             <div>
               {!myRequest && (
