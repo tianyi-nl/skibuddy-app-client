@@ -30,25 +30,28 @@ function MyTripsPage() {
         </button>
       </div>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-6 mb-6">
         <button
           onClick={() => setView("created")}
-          className={`px-4 py-2 rounded-full font-medium transition ${
-            view === "created" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+          className={`transition ${
+            view === "created"
+              ? "font-bold text-black"
+              : "font-medium text-gray-500"
           }`}
         >
           Trips I Created
         </button>
         <button
           onClick={() => setView("joined")}
-          className={`px-4 py-2 rounded-full font-medium transition ${
-            view === "joined" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
+          className={`transition ${
+            view === "joined"
+              ? "font-bold text-black"
+              : "font-medium text-gray-500"
           }`}
         >
           Trips I've Requested to Join
         </button>
       </div>
-
       {view === "created" && (
         <div>
           {createdTrips.length === 0 ? (
@@ -66,7 +69,9 @@ function MyTripsPage() {
       {view === "joined" && (
         <div>
           {myJoinRequests.length === 0 ? (
-            <p className="text-gray-500">You haven't requested to join any trips yet.</p>
+            <p className="text-gray-500">
+              You haven't requested to join any trips yet.
+            </p>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {myJoinRequests.map((request) => (
@@ -77,8 +82,8 @@ function MyTripsPage() {
                       request.status === "accepted"
                         ? "bg-green-500 text-white"
                         : request.status === "rejected"
-                        ? "bg-red-500 text-white"
-                        : "bg-yellow-400 text-gray-900"
+                          ? "bg-red-500 text-white"
+                          : "bg-yellow-400 text-gray-900"
                     }`}
                   >
                     {request.status}
