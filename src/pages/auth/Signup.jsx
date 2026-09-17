@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import service from "../../services/index.services";
+import { uploadImage } from "../../services/upload.services";
 import bdimg from "../../assets/loginsignupimg.jpg"
 
 function Signup() {
@@ -9,8 +10,29 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImagePreview(URL.createObjectURL(file));
+    setIsUploading(true);
+
+    uploadImage(file)
+      .then((response) => {
+        setProfilePicture(response.data.imageUrl);
+        setIsUploading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsUploading(false);
+      });
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -19,6 +41,7 @@ function Signup() {
       email,
       password,
       name: username,
+      ...(profilePicture && { profilePicture }),
     };
 
     try {
@@ -49,8 +72,21 @@ function Signup() {
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               Create your account
             </h1>
+          </div>
 
-        
+          {/* Profile picture upload — optional */}
+          <div className="flex flex-col items-center mb-8">
+            <label className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden bg-gray-50">
+              {imagePreview ? (
+                <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-gray-400 text-xs text-center px-2">
+                  {isUploading ? "Uploading..." : "Add photo"}
+                </span>
+              )}
+              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+            </label>
+            <p className="mt-2 text-xs text-gray-400">Optional</p>
           </div>
 
           {/* Form */}
@@ -129,7 +165,8 @@ function Signup() {
             {/* Signup button */}
             <button
               type="submit"
-              className="w-full rounded-full bg-black py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+              disabled={isUploading}
+              className="w-full rounded-full bg-black py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:bg-gray-400"
             >
               Sign up
             </button>
@@ -150,15 +187,15 @@ function Signup() {
       </div>
 
       {/* RIGHT SIDE - IMAGE */}
-       <div className="hidden w-1/2 p-6 lg:block">
-              <div className="relative h-[780px] min-h-[700px] w-full max-w-[560px] overflow-hidden rounded-3xl">
-                <img
-                  src={bdimg}
-                  alt="Ski trip illustration"
-                  className="h-full w-full rounded-3xl object-cover"
-                />
-              </div>
-            </div>
+      <div className="hidden w-1/2 p-6 lg:block">
+        <div className="relative h-[780px] min-h-[700px] w-full max-w-[560px] overflow-hidden rounded-3xl">
+          <img
+            src={bdimg}
+            alt="Ski trip illustration"
+            className="h-full w-full rounded-3xl object-cover"
+          />
+        </div>
+      </div>
 
     </div>
   );
