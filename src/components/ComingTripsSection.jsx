@@ -5,7 +5,7 @@ function ComingTripsSection({ trips }) {
   const recentTrips = trips.slice(0, 3);
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-12 mt-[240px]">
+    <section className="mx-auto max-w-7xl px-6 py-12 mt-[120px]">
       {/* Section heading */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900">

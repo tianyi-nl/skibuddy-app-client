@@ -4,8 +4,8 @@ function CreatorSection({ trips }) {
   ).filter(Boolean);
 
   return (
-     <section className="mx-auto max-w-7xl px-6 py-12 mt-[120px]">
-      <h2 className="text-3xl font-bold text-gray-900">Creator</h2>
+     <section className="mx-auto max-w-7xl px-6 py-12 mt-[240px]">
+      <h2 className="text-3xl font-bold text-gray-900">Your Buddies</h2>
       <p className="mt-2 text-gray-500 mb-[80px]">
         Meet the people organizing these trips.
       </p>
