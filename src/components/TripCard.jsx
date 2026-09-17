@@ -7,21 +7,20 @@ function TripCard({ trip }) {
       className="group relative block h-120 w-88 overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       {/* Full-card background image */}
-      {trip.image ? (
+      {trip.images?.[0] ? (
         <img
-          src={trip.images}
+          src={trip.images[0]}
           alt={trip.title}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sky-100 to-blue-200">
-          <span className="text-4xl"></span>
+          <span className="text-4xl">🏔️</span>
         </div>
       )}
 
       {/* Gradient overlay — darker at the bottom so text stays readable */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-
 
       {/* Text + button — bottom, over the image */}
       <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -49,4 +48,3 @@ function TripCard({ trip }) {
 }
 
 export default TripCard;
-
