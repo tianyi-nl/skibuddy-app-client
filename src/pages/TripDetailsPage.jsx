@@ -100,7 +100,7 @@ function TripDetailsPage() {
       <h1 className="text-3xl font-bold mb-6">{trip.title}</h1>
 
       {/* Big image with carousel */}
-      <div className="relative w-full h-120 rounded-2xl overflow-hidden bg-gray-100 mb-8">
+      <div className="relative w-full h-140 rounded-2xl overflow-hidden bg-gray-100 mb-8">
         {trip.images?.length > 0 ? (
           <>
             <img
@@ -183,8 +183,8 @@ function TripDetailsPage() {
 
           {/* JOIN REQUESTS — creator only */}
           {isLoggedIn && isCreator && (
-            <div className="w-full mt-12">
-              <h3 className="font-bold text-lg mb-4">Join Requests</h3>
+            <div className="w-full mt-12 ">
+              <h3 className="font-bold text-lg mb-4 flex-1 flex flex-col items-start">Join Requests</h3>
 
               {requests.length === 0 && (
                 <p className="text-gray-500 text-sm">No requests yet.</p>
